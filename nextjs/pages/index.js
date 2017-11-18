@@ -1,14 +1,73 @@
-import React from 'react'
-import Head from 'next/head'
+/* eslint-disable flowtype/require-valid-file-annotation */
 
-export default () => (
-  <div>
-    <Head>
-      <title>title</title>
-      <meta charSet='utf-8' />
-      <meta name='viewport' content='initial-scale=1.0, width=device-width' />
-    </Head>
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Button from 'material-ui/Button';
+import Dialog, {
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from 'material-ui/Dialog';
+import Typography from 'material-ui/Typography';
+import { withStyles } from 'material-ui/styles';
+import materialUiWithRoot from '../provider/materialUiWithRoot';
+import mobxWithRoot from '../provider/mobxWithRoot';
 
-    <h1>This page</h1>
-  </div>
-)
+const styles = {
+  root: {
+    textAlign: 'center',
+    paddingTop: 200,
+  },
+};
+
+class Index extends Component {
+  state = {
+    open: false,
+  };
+
+  handleRequestClose = () => {
+    this.setState({
+      open: false,
+    });
+  };
+
+  handleClick = () => {
+    this.setState({
+      open: true,
+    });
+  };
+
+  render() {
+    return (
+      <div className={this.props.classes.root}>
+        <Dialog open={this.state.open} onRequestClose={this.handleRequestClose}>
+          <DialogTitle>Super Secret Password</DialogTitle>
+          <DialogContent>
+            <DialogContentText>1-2-3-4-5</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button color="primary" onClick={this.handleRequestClose}>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Typography type="display1" gutterBottom>
+          Material-UI
+        </Typography>
+        <Typography type="subheading" gutterBottom>
+          example project
+        </Typography>
+        <Button raised color="accent" onClick={this.handleClick}>
+          Super Secret Password
+        </Button>
+      </div>
+    );
+  }
+}
+
+Index.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default mobxWithRoot(materialUiWithRoot(withStyles(styles)(Index)));
