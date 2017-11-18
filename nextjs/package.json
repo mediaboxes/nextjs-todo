@@ -1,0 +1,17 @@
+{
+  "name": "todoTest",
+  "version": "1.0.0",
+  "description": "Website for bigfive personality test using next.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  }
+}

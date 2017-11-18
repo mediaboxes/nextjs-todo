@@ -1,0 +1,20 @@
+version: '3'
+services:
+  mysql:
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - ./mysql:/var/lib/mysql
+  nextjs:
+    build: ./nextjs
+    command: yarn dev
+    links:
+      - mysql:mysql
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./nextjs:/usr/src/app
+      - /usr/src/app/node_modules
