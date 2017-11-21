@@ -10,11 +10,10 @@ services:
       - ./mysql:/var/lib/mysql
   nextjs:
     build: ./nextjs
-    command: yarn dev
+    command: bash -c "yarn && yarn dev"
     links:
       - mysql:mysql
     ports:
       - "3000:3000"
     volumes:
       - ./nextjs:/usr/src/app
-      - /usr/src/app/node_modules

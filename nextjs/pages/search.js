@@ -1,5 +1,4 @@
 import React from 'react'
-import Router from 'next/router'
 import autobind from 'autobind-decorator'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
@@ -22,51 +21,45 @@ class PageComponent extends React.Component {
   constructor(props, context) {
     super(props, context)
     this.state = {
-      name: '',
+      todoName: '',
+      todoLimit: '2017-05-24',
     }
   }
 
-  handleChange(name) {
-    return (event) => {
-      this.setState({ [name]: event.value })
-    }
+  @autobind
+  handleChange(event) {
+    this.setState({ [event.target.name]: event.target.value })
   }
+
   @autobind
   addTodoList(event) {
     console.log(event)
   }
 
-  @autobind
-  linkToDetail(event) {
-    Router.push({
-      pathname: '/detail',
-      query: { id: 1 },
-    })
-  }
-
   render() {
     const { classes } = this.props
     return (
-      <BaseLayout title="TODO" subtitle="TOP">
+      <BaseLayout title="TODO" subtitle="検索" className={classes.root}>
         <div className={classes.root}>
           <Typography type="title" className={classes.flex}>
-          新しいToDoを作成する
+            検索
           </Typography>
           <form className={classes.flex} noValidate autoComplete="off" onSubmit={this.addTodoList} >
             <Grid container spacing={24}>
               <Grid item xs={12} sm={10} className={classes.alignSelfBaseline}>
                 <TextField
-                  label="追加リスト名"
+                  name="todoName"
+                  label="ToDo名"
                   fullWidth
                   className={classes.flex}
-                  value={this.state.name}
-                  onChange={this.handleChange('name')}
+                  value={this.state.todoName}
+                  onChange={this.handleChange}
                   margin="normal"
                 />
               </Grid>
               <Grid item xs={12} sm={2} className={classes.alignSelfBaseline}>
-                <Button raised color="primary" className={classes.widthButton} onClick={this.linkToDetail}>
-                追加
+                <Button raised color="primary" className={classes.widthButton}>
+                  検索テキスト
                 </Button>
               </Grid>
             </Grid>
@@ -75,26 +68,27 @@ class PageComponent extends React.Component {
             </Typography>
           </form>
 
-          <Card className={classes.card}>
-            <CardHeader
-              avatar={
-                <Avatar aria-label="Recipe" className={classes.avatar}>
+          <Card className={classes.todoCard}>
+            <div className={classes.todoCardMain}>
+              <CardHeader
+                className={classes.flex}
+                avatar={
+                  <Avatar aria-label="Recipe" className={classes.avatar}>
                 り
-                </Avatar>
+                  </Avatar>
             }
-              title={
-                <Button color="primary" className={classes.widthButton} onClick={this.linkToDetail}>
-                  <span className={classes.textAlignLeft}>タイトル</span>
-                </Button>
+                title={
+                  <Button color="primary" className={classes.widthButton}>
+                    <span className={classes.textAlignLeft}>タイトル</span>
+                  </Button>
               }
-              subheader="September 14, 2016"
-            />
-            <CardContent>
-              <Typography component="p">
-              This impressive paella is a perfect party dish and a fun meal to cook together with
-              your guests. Add 1 cup of frozen peas along with the mussels, if you like.
-              </Typography>
-            </CardContent>
+                subheader="September 14, 2016"
+              />
+              <CardActions disableActionSpacing>
+                <div className={classes.flexGrow} />
+                <Button raised color="primary">完了</Button>
+              </CardActions>
+            </div>
             <CardActions disableActionSpacing>
               <div className={classes.flexGrow} />
               <IconButton aria-label="Add to favorites">
@@ -119,6 +113,9 @@ const styles = theme => ({
     marginRight: '10px',
   },
   subtitle: {
+  },
+  todoCardMain: {
+    display: 'flex',
   },
   flex: {
     flex: 1,
