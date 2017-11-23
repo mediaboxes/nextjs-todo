@@ -12,15 +12,24 @@ import Avatar from 'material-ui/Avatar'
 import IconButton from 'material-ui/IconButton'
 import FavoriteIcon from 'material-ui-icons/Favorite'
 import ShareIcon from 'material-ui-icons/Share'
-
+import 'isomorphic-fetch'
 import BaseLayout from '../components/BaseLayout'
 
 class PageComponent extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
   }
+
+  static async getInitialProps({ req }) {
+    const response = await fetch('http://localhost:3000/api/todoList')
+    const json = await response.json()
+    console.log(json)
+    return { lists: json }
+  }
+
   constructor(props, context) {
     super(props, context)
+    // console.log(props.lists)
     this.state = {
       name: '',
     }

@@ -15,7 +15,6 @@ import mobxWithRoot from '../provider/mobxWithRoot'
 
 class PageComponent extends React.Component {
   static propTypes = {
-    className: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
     subtitle: PropTypes.string.isRequired,
   }
