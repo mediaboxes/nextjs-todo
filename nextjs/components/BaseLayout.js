@@ -10,8 +10,6 @@ import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import MenuIcon from 'material-ui-icons/Menu'
-import materialUiWithRoot from '../provider/materialUiWithRoot'
-import mobxWithRoot from '../provider/mobxWithRoot'
 
 class PageComponent extends React.Component {
   static propTypes = {
@@ -19,7 +17,6 @@ class PageComponent extends React.Component {
     subtitle: PropTypes.string.isRequired,
   }
   static async getInitialProps({ req }) {
-    // const userAgent = req ? req.headers['user-agent'] : navigator.userAgent
     return {}
   }
 
@@ -30,7 +27,6 @@ class PageComponent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // const { pathname, query } = nextProps.url
   }
 
   @autobind
@@ -88,4 +84,4 @@ const styles = theme => ({
   },
 })
 
-export default mobxWithRoot(materialUiWithRoot(withStyles(styles)(PageComponent)))
+export default withStyles(styles)(PageComponent)

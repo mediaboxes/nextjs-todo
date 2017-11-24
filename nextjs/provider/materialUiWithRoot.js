@@ -1,9 +1,9 @@
 /* eslint-disable flowtype/require-valid-file-annotation */
 
-import React, { Component } from 'react';
-import { withStyles, MuiThemeProvider } from 'material-ui/styles';
-import wrapDisplayName from 'recompose/wrapDisplayName';
-import getContext from '../styles/getContext';
+import React, { Component } from 'react'
+import { withStyles, MuiThemeProvider } from 'material-ui/styles'
+import wrapDisplayName from 'recompose/wrapDisplayName'
+import getContext from '../styles/getContext'
 
 // Apply some reset
 const styles = theme => ({
@@ -17,31 +17,31 @@ const styles = theme => ({
       margin: 0,
     },
   },
-});
+})
 
-let AppWrapper = props => props.children;
+let AppWrapper = props => props.children
 
-AppWrapper = withStyles(styles)(AppWrapper);
+AppWrapper = withStyles(styles)(AppWrapper)
 
 function materialUiWithRoot(BaseComponent) {
   class materialUiWithRoot extends Component {
     static getInitialProps(ctx) {
       if (BaseComponent.getInitialProps) {
-        return BaseComponent.getInitialProps(ctx);
+        return BaseComponent.getInitialProps(ctx)
       }
 
-      return {};
+      return {}
     }
 
     componentWillMount() {
-      this.styleContext = getContext();
+      this.styleContext = getContext()
     }
 
     componentDidMount() {
       // Remove the server-side injected CSS.
-      const jssStyles = document.querySelector('#jss-server-side');
+      const jssStyles = document.querySelector('#jss-server-side')
       if (jssStyles && jssStyles.parentNode) {
-        jssStyles.parentNode.removeChild(jssStyles);
+        jssStyles.parentNode.removeChild(jssStyles)
       }
     }
 
@@ -55,15 +55,15 @@ function materialUiWithRoot(BaseComponent) {
             <BaseComponent {...this.props} />
           </AppWrapper>
         </MuiThemeProvider>
-      );
+      )
     }
   }
 
   if (process.env.NODE_ENV !== 'production') {
-    materialUiWithRoot.displayName = wrapDisplayName(BaseComponent, 'materialUiWithRoot');
+    materialUiWithRoot.displayName = wrapDisplayName(BaseComponent, 'materialUiWithRoot')
   }
 
-  return materialUiWithRoot;
+  return materialUiWithRoot
 }
 
-export default materialUiWithRoot;
+export default materialUiWithRoot

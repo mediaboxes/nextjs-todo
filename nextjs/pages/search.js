@@ -13,6 +13,8 @@ import FavoriteIcon from 'material-ui-icons/Favorite'
 import ShareIcon from 'material-ui-icons/Share'
 
 import BaseLayout from '../components/BaseLayout'
+import materialUiWithRoot from '../provider/materialUiWithRoot'
+import mobxWithRoot from '../provider/mobxWithRoot'
 
 class PageComponent extends React.Component {
   static propTypes = {
@@ -136,4 +138,4 @@ const styles = theme => ({
   },
 })
 
-export default withStyles(styles)(PageComponent)
+export default mobxWithRoot(materialUiWithRoot(withStyles(styles)(PageComponent)))
