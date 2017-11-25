@@ -24,13 +24,13 @@ class PageComponent extends React.Component {
   }
 
 
-  static async apiTodolist() {
-    const response = await fetch('http://localhost:3000/api/todolist')
+  static async apiTodolists() {
+    const response = await fetch('http://localhost:3000/api/todolists')
     const json = await response.json()
     return json
   }
   static async getInitialProps({ req }) {
-    const json = await this.apiTodolist()
+    const json = await this.apiTodolists()
     return { initLists: json }
   }
 
@@ -59,7 +59,7 @@ class PageComponent extends React.Component {
     fetch('http://localhost:3000/api/add_todolist', { method, headers, body })
       .then(async (res) => {
         res.json()
-        const json = await this.constructor.apiTodolist()
+        const json = await this.constructor.apiTodolists()
         this.setState({ title: '', lists: json })
       })
       .then(console.log)
@@ -80,7 +80,7 @@ class PageComponent extends React.Component {
       <BaseLayout title="TODO" subtitle="TOP">
         <div className={classes.root}>
           <Typography type="title" className={classes.flex}>
-          新しいToDoを作成する
+            新しいToDoを作成する
           </Typography>
           <form className={classes.flex} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }} >
             <Grid container spacing={24}>

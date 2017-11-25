@@ -26,8 +26,14 @@ app.prepare().then(() => {
   }))
   server.use(bodyParser.json())
 
-  server.post('/api/add_todolist', apiReqest.post.addTodolist)
+  server.get('/api/todolists', apiReqest.get.todolists)
   server.get('/api/todolist', apiReqest.get.todolist)
+  server.get('/api/todos', apiReqest.get.todos)
+  server.get('/api/search', apiReqest.get.search)
+  server.post('/api/add_todolist', apiReqest.post.addTodolist)
+  server.post('/api/add_todo', apiReqest.post.addTodo)
+  server.patch('/api/change_todo', apiReqest.patch.changeTodo)
+
 
   server.get('*', (req, res) => handle(req, res))
 
