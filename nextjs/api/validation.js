@@ -1,4 +1,4 @@
-
+const mysql = require('mysql')
 const { sqlPromiss } = require('./utils')
 
 function validationNullText(text) {

@@ -26,7 +26,7 @@ function todolists(req, res) {
 
   sqlPromiss(mysql.format(query, table))
     .then((results) => {
-      res.send(results)
+      res.send(Object.assign({ success: true }, { results }))
     })
     .catch((error) => {
       res.status(500)
@@ -40,7 +40,7 @@ function todolist(req, res) {
   const table = ['todo_lists', 'id', req.query.id]
   sqlPromiss(mysql.format(query, table))
     .then((results) => {
-      res.send(results)
+      res.send(Object.assign({ success: true }, { results }))
     })
     .catch((error) => {
       res.status(500)
@@ -52,32 +52,36 @@ function todos(req, res) {
   const query = 'select * from ?? where ?? = ?'
   const table = ['todo_data', 'todo_list_id', req.query.todolist_id]
   const querySql = mysql.format(query, table)
-  connection.query(querySql, (error, results, fields) => {
+  connection.query(querySql, (error, results) => {
     if (error) {
       res.status(500)
-      res.send({ success: false, errorMessage })
+      res.send({ success: false, errorMessage: error.message })
     }
-    res.send(results)
+    res.send(Object.assign({ success: true }, { results }))
   })
 }
 
 function addTodolist(req, res) {
-  validationNullText(req.body.title)
-    .catch(() => {
-      throw new Error('ToDoリストの名称は1文字以上にしてください')
-    })
-    .then(() => validationLessText(req.body.title, 30))
-    .catch(() => {
-      throw new Error('ToDoリストの名称は30文字以内にしてください')
-    })
-    .then(() => validationOverlapTodoList(req.body.title))
-    .then(() => {
-      const query = 'insert into ?? (??) values(?)'
-      const table = ['todo_lists', 'title', req.body.title]
-      return sqlPromiss(mysql.format(query, table))
-    })
+  Promise.resolve()
+    .then(() => Promise.resolve()
+      .then(() => validationNullText(req.body.title))
+      .catch(() => {
+        throw new Error('ToDoリストの名称は1文字以上にしてください')
+      }))
+    .then(() => Promise.resolve()
+      .then(() => validationLessText(req.body.title, 30))
+      .catch(() => {
+        throw new Error('ToDoリストの名称は30文字以内にしてください')
+      }))
+    .then(() => Promise.resolve()
+      .then(() => validationOverlapTodoList(req.body.title))
+      .then(() => {
+        const query = 'insert into ?? (??) values(?)'
+        const table = ['todo_lists', 'title', req.body.title]
+        return sqlPromiss(mysql.format(query, table))
+      }))
     .then((results) => {
-      res.send(results)
+      res.send(Object.assign({ success: true }, { results }))
     })
     .catch((error) => {
       res.status(500)
@@ -121,8 +125,6 @@ function search(req, res) {
 
   const resData = {}
 
-  console.log('querySqlTodoList', querySqlTodoList)
-  console.log('querySqlTodo', querySqlTodo)
 
   new Promise((resolve, reject) => {
     connection.query(querySqlTodoList, (error, results, fields) => {
