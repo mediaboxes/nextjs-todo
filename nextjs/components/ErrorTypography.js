@@ -24,7 +24,7 @@ class Component extends React.Component {
       return null
     }
     return (
-      <Typography type="subheading" className={[classes.flex, classes.error]}>
+      <Typography type="subheading" className={`${classes.flex} ${classes.error}`}>
         {this.props.errorMessage}
       </Typography>
     )
