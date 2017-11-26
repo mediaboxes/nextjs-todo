@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Provider } from 'mobx-react'
-//import store from '../stores/store'
+// import store from '../stores/store'
 let stores = null
 function initStore(strs, isServer, req) {
   if (strs !== null) return strs

@@ -2,6 +2,7 @@ import React from 'react'
 import Router from 'next/router'
 import autobind from 'autobind-decorator'
 import PropTypes from 'prop-types'
+import moment from 'moment'
 import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import Typography from 'material-ui/Typography'
@@ -12,28 +13,57 @@ import Avatar from 'material-ui/Avatar'
 import IconButton from 'material-ui/IconButton'
 import FavoriteIcon from 'material-ui-icons/Favorite'
 import ShareIcon from 'material-ui-icons/Share'
-
+import 'isomorphic-fetch'
 import BaseLayout from '../components/BaseLayout'
+import materialUiWithRoot from '../provider/materialUiWithRoot'
+import mobxWithRoot from '../provider/mobxWithRoot'
 
 class PageComponent extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
   }
+
+
+  static async apiTodolists() {
+    const response = await fetch('http://localhost:3000/api/todolists')
+    const json = await response.json()
+    return json
+  }
+  static async getInitialProps({ req }) {
+    const json = await this.apiTodolists()
+    return { initLists: json }
+  }
+
   constructor(props, context) {
     super(props, context)
     this.state = {
-      name: '',
+      title: '',
+      lists: props.initLists,
     }
   }
 
   handleChange(name) {
     return (event) => {
-      this.setState({ [name]: event.value })
+      this.setState({ [name]: event.target.value })
     }
   }
   @autobind
   addTodoList(event) {
-    console.log(event)
+    const obj = { title: this.state.title }
+    const method = 'POST'
+    const body = JSON.stringify(obj)
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }
+    fetch('http://localhost:3000/api/add_todolist', { method, headers, body })
+      .then(async (res) => {
+        res.json()
+        const json = await this.constructor.apiTodolists()
+        this.setState({ title: '', lists: json })
+      })
+      .then(console.log)
+      .catch(console.error)
   }
 
   @autobind
@@ -50,22 +80,21 @@ class PageComponent extends React.Component {
       <BaseLayout title="TODO" subtitle="TOP">
         <div className={classes.root}>
           <Typography type="title" className={classes.flex}>
-          新しいToDoを作成する
+            新しいToDoを作成する
           </Typography>
-          <form className={classes.flex} noValidate autoComplete="off" onSubmit={this.addTodoList} >
+          <form className={classes.flex} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }} >
             <Grid container spacing={24}>
               <Grid item xs={12} sm={10} className={classes.alignSelfBaseline}>
                 <TextField
                   label="追加リスト名"
                   fullWidth
                   className={classes.flex}
-                  value={this.state.name}
-                  onChange={this.handleChange('name')}
+                  onChange={this.handleChange('title')}
                   margin="normal"
                 />
               </Grid>
               <Grid item xs={12} sm={2} className={classes.alignSelfBaseline}>
-                <Button raised color="primary" className={classes.widthButton} onClick={this.linkToDetail}>
+                <Button raised color="primary" className={classes.widthButton} onClick={this.addTodoList}>
                 追加
                 </Button>
               </Grid>
@@ -75,36 +104,38 @@ class PageComponent extends React.Component {
             </Typography>
           </form>
 
-          <Card className={classes.card}>
-            <CardHeader
-              avatar={
-                <Avatar aria-label="Recipe" className={classes.avatar}>
-                り
-                </Avatar>
-            }
-              title={
-                <Button color="primary" className={classes.widthButton} onClick={this.linkToDetail}>
-                  <span className={classes.textAlignLeft}>タイトル</span>
-                </Button>
-              }
-              subheader="September 14, 2016"
-            />
-            <CardContent>
-              <Typography component="p">
-              This impressive paella is a perfect party dish and a fun meal to cook together with
-              your guests. Add 1 cup of frozen peas along with the mussels, if you like.
-              </Typography>
-            </CardContent>
-            <CardActions disableActionSpacing>
-              <div className={classes.flexGrow} />
-              <IconButton aria-label="Add to favorites">
-                <FavoriteIcon />
-              </IconButton>
-              <IconButton aria-label="Share">
-                <ShareIcon />
-              </IconButton>
-            </CardActions>
-          </Card>
+          {this.state.lists.map(data => (
+            <Card className={classes.card} key={data.id}>
+              <CardHeader
+                avatar={
+                  <Avatar aria-label="Recipe" className={classes.avatar}>
+                    り
+                  </Avatar>
+                }
+                title={
+                  <Button color="primary" className={classes.widthButton} onClick={this.linkToDetail}>
+                    <span className={classes.textAlignLeft}>{data.title}</span>
+                  </Button>
+                }
+                subheader={moment(data.created_at).format('YYYY/MM/DD HH:mm')}
+              />
+              <CardContent>
+                <Typography component="p">
+                  This impressive paella is a perfect party dish and a fun meal to cook together with
+                  your guests. Add 1 cup of frozen peas along with the mussels, if you like.
+                </Typography>
+              </CardContent>
+              <CardActions disableActionSpacing>
+                <div className={classes.flexGrow} />
+                <IconButton aria-label="Add to favorites">
+                  <FavoriteIcon />
+                </IconButton>
+                <IconButton aria-label="Share">
+                  <ShareIcon />
+                </IconButton>
+              </CardActions>
+            </Card>
+          ))}
         </div>
       </BaseLayout>
     )
@@ -114,6 +145,9 @@ class PageComponent extends React.Component {
 const styles = theme => ({
   root: {
     padding: '20px',
+  },
+  card: {
+    marginBottom: '15px',
   },
   title: {
     marginRight: '10px',
@@ -136,7 +170,8 @@ const styles = theme => ({
   widthButton: {
     width: '100%',
     padding: '0',
+    'text-transform': 'none',
   },
 })
 
-export default withStyles(styles)(PageComponent)
+export default mobxWithRoot(materialUiWithRoot(withStyles(styles)(PageComponent)))

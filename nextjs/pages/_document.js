@@ -1,14 +1,14 @@
 // @flow weak
 
-import React from 'react';
-import Document, { Head, Main, NextScript } from 'next/document';
-import JssProvider from 'react-jss/lib/JssProvider';
-import getContext from '../styles/getContext';
+import React from 'react'
+import Document, { Head, Main, NextScript } from 'next/document'
+import JssProvider from 'react-jss/lib/JssProvider'
+import getContext from '../styles/getContext'
 
 class MyDocument extends Document {
   render() {
     return (
-      <html lang="en" dir="ltr">
+      <html lang="jp" dir="ltr">
         <Head>
           <title>My page</title>
           <meta charSet="utf-8" />
@@ -37,11 +37,11 @@ class MyDocument extends Document {
           <NextScript />
         </body>
       </html>
-    );
+    )
   }
 }
 
-MyDocument.getInitialProps = ctx => {
+MyDocument.getInitialProps = (ctx) => {
   // Resolution order
   //
   // On the server:
@@ -60,12 +60,12 @@ MyDocument.getInitialProps = ctx => {
   // 3. page.render
 
   // Get the context to collected side effects.
-  const context = getContext();
+  const context = getContext()
   const page = ctx.renderPage(Component => props => (
     <JssProvider registry={context.sheetsRegistry} jss={context.jss}>
       <Component {...props} />
     </JssProvider>
-  ));
+  ))
 
   return {
     ...page,
@@ -77,7 +77,7 @@ MyDocument.getInitialProps = ctx => {
         dangerouslySetInnerHTML={{ __html: context.sheetsRegistry.toString() }}
       />
     ),
-  };
-};
+  }
+}
 
-export default MyDocument;
+export default MyDocument
