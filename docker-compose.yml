@@ -5,8 +5,10 @@ services:
     ports:
       - "3306:3306"
     environment:
+      TZ: Japan
       MYSQL_ROOT_PASSWORD: password
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ./mysql:/var/lib/mysql
   nextjs:
     build: ./nextjs
@@ -15,5 +17,9 @@ services:
       - mysql:mysql
     ports:
       - "3000:3000"
+      - "9229:9229"
+    environment:
+      TZ: Japan
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ./nextjs:/usr/src/app

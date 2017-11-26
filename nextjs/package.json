@@ -33,7 +33,7 @@
     "eslint-plugin-react": "^7.4.0"
   },
   "scripts": {
-    "dev": "node server.js",
+    "dev": "node --inspect server.js",
     "build": "next build",
     "start": "next start"
   }
