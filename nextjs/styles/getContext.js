@@ -10,8 +10,8 @@ import createGenerateClassName from 'material-ui/styles/createGenerateClassName'
 
 const theme = createMuiTheme({
   palette: {
-    primary: purple,
-    secondary: green,
+    // primary: purple,
+    // secondary: green,
   },
 })
 

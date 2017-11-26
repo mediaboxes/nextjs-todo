@@ -10,28 +10,43 @@ import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
 import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card'
 import Avatar from 'material-ui/Avatar'
+import { CircularProgress } from 'material-ui/Progress'
 import IconButton from 'material-ui/IconButton'
 import FavoriteIcon from 'material-ui-icons/Favorite'
+import ListIcon from 'material-ui-icons/List'
 import ShareIcon from 'material-ui-icons/Share'
 import 'isomorphic-fetch'
+
 import BaseLayout from '../components/BaseLayout'
 import materialUiWithRoot from '../provider/materialUiWithRoot'
 import mobxWithRoot from '../provider/mobxWithRoot'
+import { apiTodolists, apiAddTodoList } from '../utils/todoApi'
+
+import MessageTypography from '../components/MessageTypography'
+import ErrorTypography from '../components/ErrorTypography'
 
 class PageComponent extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
   }
 
-
-  static async apiTodolists() {
-    const response = await fetch('http://localhost:3000/api/todolists')
-    const json = await response.json()
-    return json
-  }
   static async getInitialProps({ req }) {
-    const json = await this.apiTodolists()
-    return { initLists: json }
+    const initProps = {}
+    try {
+      const res = await apiTodolists()
+      initProps.initLists = res
+    } catch (error) {
+      initProps.initError = error.message
+    }
+    return initProps
+  }
+
+  @autobind
+  static linkToDetail(event) {
+    Router.push({
+      pathname: '/detail',
+      query: { id: 1 },
+    })
   }
 
   constructor(props, context) {
@@ -39,6 +54,9 @@ class PageComponent extends React.Component {
     this.state = {
       title: '',
       lists: props.initLists,
+      message: '',
+      error: props.initError,
+      addApiLoading: false,
     }
   }
 
@@ -47,32 +65,21 @@ class PageComponent extends React.Component {
       this.setState({ [name]: event.target.value })
     }
   }
-  @autobind
-  addTodoList(event) {
-    const obj = { title: this.state.title }
-    const method = 'POST'
-    const body = JSON.stringify(obj)
-    const headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }
-    fetch('http://localhost:3000/api/add_todolist', { method, headers, body })
-      .then(async (res) => {
-        res.json()
-        const json = await this.constructor.apiTodolists()
-        this.setState({ title: '', lists: json })
-      })
-      .then(console.log)
-      .catch(console.error)
-  }
 
   @autobind
-  linkToDetail(event) {
-    Router.push({
-      pathname: '/detail',
-      query: { id: 1 },
-    })
+  async addTodoList() {
+    this.setState({ message: '', error: '', addApiLoading: true })
+    try {
+      await apiAddTodoList(this.state.title)
+      const res = await apiTodolists()
+      this.setState({
+        title: '', message: '新しいToDoリストが作成されました', lists: res, addApiLoading: false,
+      })
+    } catch (error) {
+      this.setState({ error: error.message, addApiLoading: false })
+    }
   }
+
 
   render() {
     const { classes } = this.props
@@ -82,11 +89,11 @@ class PageComponent extends React.Component {
           <Typography type="title" className={classes.flex}>
             新しいToDoを作成する
           </Typography>
-          <form className={classes.flex} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }} >
+          <form className={[classes.flex, classes.form]} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }} >
             <Grid container spacing={24}>
               <Grid item xs={12} sm={10} className={classes.alignSelfBaseline}>
                 <TextField
-                  label="追加リスト名"
+                  label="リスト名を入力してください"
                   fullWidth
                   className={classes.flex}
                   onChange={this.handleChange('title')}
@@ -94,14 +101,22 @@ class PageComponent extends React.Component {
                 />
               </Grid>
               <Grid item xs={12} sm={2} className={classes.alignSelfBaseline}>
-                <Button raised color="primary" className={classes.widthButton} onClick={this.addTodoList}>
-                追加
-                </Button>
+                <div className={classes.wrapper}>
+                  <Button
+                    raised
+                    color="primary"
+                    className={classes.widthButton}
+                    disabled={this.state.addApiLoading}
+                    onClick={this.addTodoList}
+                  >
+                    リストの作成
+                  </Button>
+                  {this.state.addApiLoading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                </div>
               </Grid>
             </Grid>
-            <Typography type="caption" className={classes.flex}>
-            エラーです
-            </Typography>
+            <MessageTypography message={this.state.message} />
+            <ErrorTypography errorMessage={this.state.error} />
           </form>
 
           {this.state.lists.map(data => (
@@ -109,23 +124,22 @@ class PageComponent extends React.Component {
               <CardHeader
                 avatar={
                   <Avatar aria-label="Recipe" className={classes.avatar}>
-                    り
+                    <ListIcon />
                   </Avatar>
                 }
                 title={
-                  <Button color="primary" className={classes.widthButton} onClick={this.linkToDetail}>
+                  <Button color="primary" className={classes.widthButton} onClick={this.constructor.linkToDetail}>
                     <span className={classes.textAlignLeft}>{data.title}</span>
                   </Button>
                 }
-                subheader={moment(data.created_at).format('YYYY/MM/DD HH:mm')}
               />
               <CardContent>
                 <Typography component="p">
-                  This impressive paella is a perfect party dish and a fun meal to cook together with
-                  your guests. Add 1 cup of frozen peas along with the mussels, if you like.
+                  {(data.all_count > 0) ? `${data.all_count}個中${data.complete_count}個がチェック済み` : 'ToDoがありません'}<br />
+                  {(data.min_deadline) ? `~${moment(data.min_deadline).format('YYYY年MM月DD日')}` : null }
                 </Typography>
               </CardContent>
-              <CardActions disableActionSpacing>
+              {/* <CardActions disableActionSpacing>
                 <div className={classes.flexGrow} />
                 <IconButton aria-label="Add to favorites">
                   <FavoriteIcon />
@@ -133,7 +147,7 @@ class PageComponent extends React.Component {
                 <IconButton aria-label="Share">
                   <ShareIcon />
                 </IconButton>
-              </CardActions>
+              </CardActions> */}
             </Card>
           ))}
         </div>
@@ -160,6 +174,9 @@ const styles = theme => ({
   flexGrow: {
     flex: '1 1 auto',
   },
+  form: {
+    marginBottom: '15px',
+  },
   alignSelfBaseline: {
     'align-self': 'baseline',
   },
@@ -171,6 +188,17 @@ const styles = theme => ({
     width: '100%',
     padding: '0',
     'text-transform': 'none',
+  },
+  wrapper: {
+    margin: theme.spacing.unit,
+    position: 'relative',
+  },
+  buttonProgress: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
   },
 })
 
