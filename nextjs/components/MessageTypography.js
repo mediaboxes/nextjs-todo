@@ -23,7 +23,7 @@ class Component extends React.Component {
       return null
     }
     return (
-      <Typography type="subheading" className={[classes.flex, classes.message]}>
+      <Typography type="subheading" className={`${classes.flex} ${classes.message}`}>
         {this.props.message}
       </Typography>
     )

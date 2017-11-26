@@ -5,6 +5,7 @@ const {
   validationNullText,
   validationLessText,
   validationOverlapTodoList,
+  validationOverlapTodo,
 } = require('./validation')
 
 
@@ -36,7 +37,7 @@ function todolists(req, res) {
 
 
 function todolist(req, res) {
-  const query = 'select * from ?? where ?? = ?'
+  const query = 'SELECT * FROM ?? WHERE ?? = ?'
   const table = ['todo_lists', 'id', req.query.id]
   sqlPromiss(mysql.format(query, table))
     .then((results) => {
@@ -49,16 +50,16 @@ function todolist(req, res) {
 }
 
 function todos(req, res) {
-  const query = 'select * from ?? where ?? = ?'
-  const table = ['todo_data', 'todo_list_id', req.query.todolist_id]
-  const querySql = mysql.format(query, table)
-  connection.query(querySql, (error, results) => {
-    if (error) {
+  const query = 'SELECT * FROM ?? WHERE ?? = ? ORDER BY ?? desc'
+  const table = ['todo_data', 'todo_list_id', req.query.todolist_id, 'created_at']
+  sqlPromiss(mysql.format(query, table))
+    .then((results) => {
+      res.send(Object.assign({ success: true }, { results }))
+    })
+    .catch((error) => {
       res.status(500)
       res.send({ success: false, errorMessage: error.message })
-    }
-    res.send(Object.assign({ success: true }, { results }))
-  })
+    })
 }
 
 function addTodolist(req, res) {
@@ -74,9 +75,10 @@ function addTodolist(req, res) {
         throw new Error('ToDoリストの名称は30文字以内にしてください')
       }))
     .then(() => Promise.resolve()
-      .then(() => validationOverlapTodoList(req.body.title))
+      .then(() => validationOverlapTodoList(req.body.title)))
+    .then(() => Promise.resolve()
       .then(() => {
-        const query = 'insert into ?? (??) values(?)'
+        const query = 'INSERT INTO ?? (??) values(?)'
         const table = ['todo_lists', 'title', req.body.title]
         return sqlPromiss(mysql.format(query, table))
       }))
@@ -90,36 +92,52 @@ function addTodolist(req, res) {
 }
 
 function addTodo(req, res) {
-  const query = 'insert into ?? (??, ??, ??) values(?, ?, ?)'
-  const table = ['todo_data', 'todo_list_id', 'text', 'deadline_at', req.body.todolist_id, req.body.text, req.body.deadline_at]
-  const querySql = mysql.format(query, table)
-  connection.query(querySql, (error, results, fields) => {
-    if (error) {
+  Promise.resolve()
+    .then(() => Promise.resolve()
+      .then(() => validationNullText(req.body.text))
+      .catch(() => {
+        throw new Error('ToDoの名称は1文字以上にしてください')
+      }))
+    .then(() => Promise.resolve()
+      .then(() => validationLessText(req.body.text, 30))
+      .catch(() => {
+        throw new Error('ToDoの名称は30文字以内にしてください')
+      }))
+    .then(() => Promise.resolve()
+      .then(() => validationOverlapTodo(req.body.todolist_id, req.body.text)))
+    .then(() => Promise.resolve()
+      .then(() => {
+        const query = 'INSERT INTO ?? (??, ??, ??) values(?, ?, ?)'
+        const table = ['todo_data', 'todo_list_id', 'text', 'deadline_at', req.body.todolist_id, req.body.text, req.body.deadline_at]
+        return sqlPromiss(mysql.format(query, table))
+      }))
+    .then((results) => {
+      res.send(Object.assign({ success: true }, { results }))
+    })
+    .catch((error) => {
       res.status(500)
-      res.send({ success: false })
-    }
-    res.send({ success: true })
-  })
+      res.send({ success: false, errorMessage: error.message })
+    })
 }
 function changeTodo(req, res) {
-  const query = 'update ?? set ?? = ? where ?? = ?'
+  const query = 'UPDATE ?? SET ?? = ? WHERE ?? = ?'
   const table = ['todo_data', 'complete', req.body.complete, 'id', req.body.id]
-  const querySql = mysql.format(query, table)
-  connection.query(querySql, (error, results, fields) => {
-    if (error) {
+  sqlPromiss(mysql.format(query, table))
+    .then((results) => {
+      res.send(Object.assign({ success: true }, { results }))
+    })
+    .catch((error) => {
       res.status(500)
-      res.send({ success: false })
-    }
-    res.send({ success: true })
-  })
+      res.send({ success: false, errorMessage: error.message })
+    })
 }
 
 function search(req, res) {
-  const queryTodoList = 'select * from ?? where ?? LIKE ?'
+  const queryTodoList = 'SELECT * FROM ?? WHERE ?? LIKE ?'
   const tableTodoList = ['todo_lists', 'title', `%${req.query.q}%`]
   const querySqlTodoList = mysql.format(queryTodoList, tableTodoList)
 
-  const queryTodo = 'select * from ?? where ?? LIKE ?'
+  const queryTodo = 'SELECT * FROM ?? WHERE ?? LIKE ?'
   const tableTodo = ['todo_data', 'text', `%${req.query.q}%`]
   const querySqlTodo = mysql.format(queryTodo, tableTodo)
 
