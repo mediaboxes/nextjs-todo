@@ -41,12 +41,13 @@ class PageComponent extends React.Component {
     return initProps
   }
 
-  @autobind
-  static linkToDetail(event) {
-    Router.push({
-      pathname: '/detail',
-      query: { id: 1 },
-    })
+  static linkToDetail(id) {
+    return (event) => {
+      Router.push({
+        pathname: '/detail',
+        query: { id },
+      })
+    }
   }
 
   constructor(props, context) {
@@ -87,13 +88,13 @@ class PageComponent extends React.Component {
       <BaseLayout title="TODO" subtitle="TOP">
         <div className={classes.root}>
           <Typography type="title" className={classes.flex}>
-            新しいToDoを作成する
+            新しいToDoリストを作成する
           </Typography>
-          <form className={[classes.flex, classes.form]} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }} >
+          <form className={`${classes.flex} ${classes.form}`} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }} >
             <Grid container spacing={24}>
               <Grid item xs={12} sm={10} className={classes.alignSelfBaseline}>
                 <TextField
-                  label="リスト名を入力してください"
+                  label="新しいToDoリスト名を入力してください"
                   fullWidth
                   className={classes.flex}
                   onChange={this.handleChange('title')}
@@ -115,9 +116,9 @@ class PageComponent extends React.Component {
                 </div>
               </Grid>
             </Grid>
-            <MessageTypography message={this.state.message} />
-            <ErrorTypography errorMessage={this.state.error} />
           </form>
+          <MessageTypography message={this.state.message} />
+          <ErrorTypography errorMessage={this.state.error} />
 
           {this.state.lists.map(data => (
             <Card className={classes.card} key={data.id}>
@@ -128,7 +129,7 @@ class PageComponent extends React.Component {
                   </Avatar>
                 }
                 title={
-                  <Button color="primary" className={classes.widthButton} onClick={this.constructor.linkToDetail}>
+                  <Button color="primary" className={classes.widthButton} onClick={this.constructor.linkToDetail(data.id)}>
                     <span className={classes.textAlignLeft}>{data.title}</span>
                   </Button>
                 }
