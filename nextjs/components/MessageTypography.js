@@ -13,7 +13,8 @@ const styles = theme => ({
   },
 })
 
-class Component extends React.Component {
+@withStyles(styles)
+export default class Component extends React.Component {
   static propTypes = {
     message: PropTypes.string,
   }
@@ -30,5 +31,3 @@ class Component extends React.Component {
   }
 }
 
-
-export default withStyles(styles)(Component)
