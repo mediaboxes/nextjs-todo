@@ -111,11 +111,8 @@ class PageComponent extends React.Component {
   render() {
     const { classes } = this.props
     return (
-      <BaseLayout title="TODO" subtitle="TOP">
+      <BaseLayout title="TODOリスト">
         <div className={classes.root}>
-          <Typography type="title" className={classes.flex}>
-            新しいToDoリストを作成する
-          </Typography>
           <form className={`${classes.flex} ${classes.form}`} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }} >
             <Grid container spacing={24}>
               <Grid item xs={12} sm={10} className={classes.alignSelfBaseline}>

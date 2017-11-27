@@ -8,6 +8,9 @@ import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
 import { CircularProgress } from 'material-ui/Progress'
+import Avatar from 'material-ui/Avatar'
+import ListIcon from 'material-ui-icons/List'
+import green from 'material-ui/colors/green'
 
 import 'isomorphic-fetch'
 
@@ -24,6 +27,15 @@ import ErrorTypography from '../components/ErrorTypography'
 const styles = theme => ({
   root: {
     padding: '20px',
+  },
+  title: {
+    display: 'flex',
+    'align-items': 'center',
+  },
+  listAvatar: {
+    marginRight: '15px',
+    color: '#fff',
+    backgroundColor: green[300],
   },
   form: {
     marginBottom: '15px',
@@ -144,11 +156,16 @@ class PageComponent extends React.Component {
     const { classes } = this.props
     if (!this.state.detailList || !this.state.todos) return null
     return (
-      <BaseLayout title="TODO" subtitle="新しいToDoを作成する" className={classes.root}>
+      <BaseLayout title="TODOリスト">
         <div className={classes.root}>
-          <Typography type="title" className={classes.flex}>
-            {this.state.detailList.title}
-          </Typography>
+          <div className={classes.title}>
+            <Avatar aria-label="Recipe" className={classes.listAvatar}>
+              <ListIcon />
+            </Avatar>
+            <Typography type="title" className={classes.flex}>
+              {this.state.detailList.title}
+            </Typography>
+          </div>
           <form className={`${classes.flex} ${classes.form}`} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }}>
             <Grid container spacing={24}>
               <Grid item xs={12} sm={10} className={classes.alignSelfBaseline}>

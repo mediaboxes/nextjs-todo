@@ -4,50 +4,10 @@
 import { create, SheetsRegistry } from 'jss'
 import preset from 'jss-preset-default'
 import { createMuiTheme } from 'material-ui/styles'
-import purple from 'material-ui/colors/purple'
-import green from 'material-ui/colors/green'
 import createGenerateClassName from 'material-ui/styles/createGenerateClassName'
 
 const theme = createMuiTheme({
   palette: {
-    // primary: purple,
-    // secondary: green,
-  },
-  flex: {
-    flex: 1,
-  },
-  root: {
-    padding: '20px',
-  },
-  title: {
-    marginRight: '10px',
-  },
-  subtitle: {
-  },
-  flexGrow: {
-    flex: '1 1 auto',
-  },
-  form: {
-    marginBottom: '15px',
-  },
-  alignSelfBaseline: {
-    'align-self': 'baseline',
-  },
-  widthButton: {
-    width: '100%',
-    padding: '0',
-    'text-transform': 'none',
-  },
-  wrapper: {
-    margin: '15px',
-    position: 'relative',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
   },
 })
 

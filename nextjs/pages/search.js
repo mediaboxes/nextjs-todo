@@ -26,8 +26,6 @@ const styles = theme => ({
   title: {
     marginRight: '10px',
   },
-  subtitle: {
-  },
   form: {
     marginBottom: '15px',
   },
@@ -52,7 +50,6 @@ class PageComponent extends React.Component {
     classes: PropTypes.object.isRequired,
   }
   static linkToDetail(id) {
-    console.log(id)
     return (event) => {
       Router.push({
         pathname: '/detail',
@@ -67,6 +64,7 @@ class PageComponent extends React.Component {
       todoLists: [],
       todoData: [],
       error: '',
+      loaded: false,
     }
   }
 
@@ -82,6 +80,7 @@ class PageComponent extends React.Component {
       this.setState({
         todoLists: response.todolists,
         todoData: response.tododata,
+        loaded: true,
       })
     } catch (error) {
       this.setState({
@@ -93,7 +92,7 @@ class PageComponent extends React.Component {
   render() {
     const { classes } = this.props
     return (
-      <BaseLayout title="TODO" subtitle="検索" className={classes.root}>
+      <BaseLayout title="TODOリスト">
         <div className={classes.root}>
           <Typography type="title" className={classes.flex}>
             検索
@@ -120,12 +119,12 @@ class PageComponent extends React.Component {
 
           <ErrorTypography errorMessage={this.state.error} />
 
-          <MessageTypography message={(this.state.todoData.length > 0) ? `ToDoが${this.state.todoData.length}件見つかりました` : '対象のToDoは見つかりません'} />
+          {(this.state.loaded) ? <MessageTypography message={(this.state.todoData.length > 0) ? `ToDoが${this.state.todoData.length}件見つかりました` : '対象のToDoは見つかりません'} /> : null}
           {this.state.todoData.map(data => (
             <CardTodoDataSearch key={data.id} data={data} linkToDetail={this.constructor.linkToDetail(data.todo_list_id)} />
           ))}
 
-          <MessageTypography message={(this.state.todoLists.length > 0) ? `ToDoリストが${this.state.todoLists.length}件見つかりました` : '対象のToDoリストは見つかりません'} />
+          {(this.state.loaded) ? <MessageTypography message={(this.state.todoLists.length > 0) ? `ToDoリストが${this.state.todoLists.length}件見つかりました` : '対象のToDoリストは見つかりません'} /> : null}
           {this.state.todoLists.map(data => (
             <CardTodoListSearch key={data.id} data={data} linkToDetail={this.constructor.linkToDetail(data.id)} />
           ))}

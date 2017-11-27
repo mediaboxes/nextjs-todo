@@ -8,12 +8,17 @@ import Card, { CardHeader, CardContent, CardActions } from 'material-ui/Card'
 import Avatar from 'material-ui/Avatar'
 import CheckBoxOutlineBlank from 'material-ui-icons/CheckBoxOutlineBlank'
 import CheckBox from 'material-ui-icons/CheckBox'
+import deepOrange from 'material-ui/colors/deepOrange'
 
 import 'isomorphic-fetch'
 
 const styles = theme => ({
   flex: {
     flex: 1,
+  },
+  completeAvatar: {
+    color: '#fff',
+    backgroundColor: deepOrange[500],
   },
   todoCard: {
     marginBottom: '15px',
@@ -23,6 +28,9 @@ const styles = theme => ({
   },
   flexGrow: {
     flex: '1 1 auto',
+  },
+  cartHeader: {
+    paddingBottom: '0px',
   },
 })
 
@@ -38,9 +46,9 @@ export default class Component extends React.Component {
       <Card className={classes.todoCard} key={data.id}>
         <div className={classes.todoCardMain}>
           <CardHeader
-            className={classes.flex}
+            className={`${classes.flex} ${classes.cartHeader}`}
             avatar={
-              <Avatar aria-label="Recipe" className={classes.avatar}>
+              <Avatar aria-label="Recipe" className={data.complete ? classes.completeAvatar : classes.avatar}>
                 {data.complete ? <CheckBox /> : <CheckBoxOutlineBlank />}
               </Avatar>
           }
