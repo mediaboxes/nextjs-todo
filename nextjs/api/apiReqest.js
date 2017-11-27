@@ -133,46 +133,46 @@ function changeTodo(req, res) {
 }
 
 function search(req, res) {
-  const queryTodoList = 'SELECT * FROM ?? WHERE ?? LIKE ?'
-  const tableTodoList = ['todo_lists', 'title', `%${req.query.q}%`]
-  const querySqlTodoList = mysql.format(queryTodoList, tableTodoList)
-
-  const queryTodo = 'SELECT * FROM ?? WHERE ?? LIKE ?'
-  const tableTodo = ['todo_data', 'text', `%${req.query.q}%`]
-  const querySqlTodo = mysql.format(queryTodo, tableTodo)
-
   const resData = {}
-
-
-  new Promise((resolve, reject) => {
-    connection.query(querySqlTodoList, (error, results, fields) => {
-      console.log('querySqlTodoList', error, results)
-      if (error) {
-        reject(error)
-        return
-      }
-      resData.list = results
-      resolve()
+  const queryText = req.query && req.query.q || ''
+  Promise.resolve()
+    .then(() => Promise.resolve()
+      .then(() => {
+        const query = 'SELECT * FROM ?? WHERE ?? LIKE ? ORDER BY ?? desc'
+        const table = ['todo_lists', 'title', `%${queryText}%`, 'created_at']
+        return sqlPromiss(mysql.format(query, table))
+      }))
+    .then((results) => {
+      resData.todolists = results
     })
-  })
-    .then(() => new Promise((resolve, reject) => {
-      connection.query(querySqlTodo, (error, results, fields) => {
-        console.log('querySqlTodo', error, results)
-        if (error) {
-          reject(error)
-          return
-        }
-        resData.data = results
-        resolve()
-      })
-    }))
-    .then(() => {
-      console.log('resData', resData)
-      res.send(resData)
+    .then(() => Promise.resolve()
+      .then(() => {
+        const query = `
+          SELECT ??, ??, ??, ??, ??, ?? AS ??, ?? AS ??
+          FROM ?? 
+          LEFT OUTER JOIN ?? ON(?? = ??) 
+          WHERE ?? LIKE ? 
+          ORDER BY ?? desc;
+          `
+        const table = [
+          'todo_data.id', 'todo_data.text', 'todo_data.complete', 'todo_data.deadline_at', 'todo_data.created_at', 'todo_lists.title', 'todo_list_title', 'todo_lists.id', 'todo_list_id',
+          'todo_data',
+          'todo_lists', 'todo_data.todo_list_id', 'todo_lists.id',
+          'todo_data.text', `%${queryText}%`,
+          'todo_data.created_at',
+        ]
+        return sqlPromiss(mysql.format(query, table))
+      }))
+    .then((results) => {
+      resData.tododata = results
+      return resData
     })
-    .catch(() => {
+    .then((results) => {
+      res.send(Object.assign({ success: true }, { results }))
+    })
+    .catch((error) => {
       res.status(500)
-      res.send({ success: false })
+      res.send({ success: false, errorMessage: error.message })
     })
 }
 

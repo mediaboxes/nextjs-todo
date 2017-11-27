@@ -11,7 +11,26 @@ import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import MenuIcon from 'material-ui-icons/Menu'
 
-class PageComponent extends React.Component {
+const styles = theme => ({
+  root: {
+    width: '100%',
+  },
+  title: {
+    marginRight: '10px',
+  },
+  subtitle: {
+    flex: 1,
+  },
+  flex: {
+    flex: 1,
+  },
+  searchButton: {
+    'font-weight': 'bold',
+  },
+})
+
+@withStyles(styles)
+export default class PageComponent extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     subtitle: PropTypes.string.isRequired,
@@ -66,22 +85,3 @@ class PageComponent extends React.Component {
   }
 }
 
-const styles = theme => ({
-  root: {
-    width: '100%',
-  },
-  title: {
-    marginRight: '10px',
-  },
-  subtitle: {
-    flex: 1,
-  },
-  flex: {
-    flex: 1,
-  },
-  searchButton: {
-    'font-weight': 'bold',
-  },
-})
-
-export default withStyles(styles)(PageComponent)

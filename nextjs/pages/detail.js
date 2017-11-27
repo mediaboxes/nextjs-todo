@@ -7,18 +7,12 @@ import TextField from 'material-ui/TextField'
 import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
-import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card'
-import Avatar from 'material-ui/Avatar'
 import { CircularProgress } from 'material-ui/Progress'
-import IconButton from 'material-ui/IconButton'
-import FavoriteIcon from 'material-ui-icons/Favorite'
-import ShareIcon from 'material-ui-icons/Share'
-import CheckBoxOutlineBlank from 'material-ui-icons/CheckBoxOutlineBlank'
-import CheckBox from 'material-ui-icons/CheckBox'
 
 import 'isomorphic-fetch'
 
 import BaseLayout from '../components/BaseLayout'
+import CardTodoDataMain from '../components/CardTodoDataMain'
 import materialUiWithRoot from '../provider/materialUiWithRoot'
 import mobxWithRoot from '../provider/mobxWithRoot'
 
@@ -27,6 +21,38 @@ import { apiTodolist, apiTodos, apiAddTodo, apiChangeCompleatTodo } from '../uti
 import MessageTypography from '../components/MessageTypography'
 import ErrorTypography from '../components/ErrorTypography'
 
+const styles = theme => ({
+  root: {
+    padding: '20px',
+  },
+  form: {
+    marginBottom: '15px',
+  },
+  flex: {
+    flex: 1,
+  },
+  alignSelfBaseline: {
+    'align-self': 'baseline',
+  },
+  widthButton: {
+    width: '100%',
+    padding: '0',
+    'text-transform': 'none',
+  },
+  wrapper: {
+    margin: theme.spacing.unit,
+    position: 'relative',
+  },
+  buttonProgress: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+  },
+})
+
+@withStyles(styles)
 class PageComponent extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
@@ -169,38 +195,7 @@ class PageComponent extends React.Component {
           <ErrorTypography errorMessage={(!this.state.todos || this.state.todos.length < 1) ? '登録されたToDoはございません' : null} />
 
           {this.state.todos.map((data, index) => (
-            <Card className={classes.todoCard} key={data.id}>
-              <div className={classes.todoCardMain}>
-                <CardHeader
-                  className={classes.flex}
-                  avatar={
-                    <Avatar aria-label="Recipe" className={classes.avatar}>
-                      {data.complete ? <CheckBox /> : <CheckBoxOutlineBlank />}
-                    </Avatar>
-                  }
-                  title={data.text}
-                />
-                <CardActions disableActionSpacing>
-                  <div className={classes.flexGrow} />
-                  <Button raised={!data.complete} color="primary" onClick={this.changeCompleat(data, index)}>{!data.complete ? '完了' : '未完了に戻す'}</Button>
-                </CardActions>
-              </div>
-              <CardContent>
-                <Typography component="p">
-                  {`期限 : ${moment(data.deadline_at).format('YYYY年MM月DD日')}`}<br />
-                  {`作成日 : ${moment(data.created_at).format('YYYY年MM月DD日')}`}
-                </Typography>
-              </CardContent>
-              {/* <CardActions disableActionSpacing>
-                <div className={classes.flexGrow} />
-                <IconButton aria-label="Add to favorites">
-                  <FavoriteIcon />
-                </IconButton>
-                <IconButton aria-label="Share">
-                  <ShareIcon />
-                </IconButton>
-              </CardActions> */}
-            </Card>
+            <CardTodoDataMain key={data.id} data={data} changeCompleat={this.changeCompleat(data, index)} />
           ))}
         </div>
       </BaseLayout>
@@ -208,48 +203,5 @@ class PageComponent extends React.Component {
   }
 }
 
-const styles = theme => ({
-  root: {
-    padding: '20px',
-  },
-  form: {
-    marginBottom: '15px',
-  },
-  todoCard: {
-    marginBottom: '15px',
-  },
-  todoCardMain: {
-    display: 'flex',
-  },
-  flex: {
-    flex: 1,
-  },
-  flexGrow: {
-    flex: '1 1 auto',
-  },
-  alignSelfBaseline: {
-    'align-self': 'baseline',
-  },
-  textAlignLeft: {
-    'text-align': 'left',
-    width: '100%',
-  },
-  widthButton: {
-    width: '100%',
-    padding: '0',
-    'text-transform': 'none',
-  },
-  wrapper: {
-    margin: theme.spacing.unit,
-    position: 'relative',
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-})
 
-export default mobxWithRoot(materialUiWithRoot(withStyles(styles)(PageComponent)))
+export default mobxWithRoot(materialUiWithRoot(PageComponent))

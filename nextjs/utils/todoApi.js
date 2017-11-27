@@ -73,3 +73,16 @@ export async function apiChangeCompleatTodo(id, complete) {
   isResponseError(json)
   return json.results
 }
+
+export async function apiSearch(word) {
+  const obj = { q: word }
+  const method = 'GET'
+  const params = new URLSearchParams()
+  Object.keys(obj).forEach((key) => {
+    params.set(key, obj[key])
+  })
+  const response = await fetch(`http://localhost:3000/api/search?${params.toString()}`, { method })
+  const json = await response.json()
+  isResponseError(json)
+  return json.results
+}
