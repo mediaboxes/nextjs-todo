@@ -8,9 +8,9 @@ import getContext from '../styles/getContext'
 class MyDocument extends Document {
   render() {
     return (
-      <html lang="jp" dir="ltr">
+      <html lang="ja" dir="ltr">
         <Head>
-          <title>My page</title>
+          <title>TODOリスト</title>
           <meta charSet="utf-8" />
           {/* Use minimum-scale=1 to enable GPU rasterization */}
           <meta

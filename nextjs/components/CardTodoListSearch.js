@@ -7,6 +7,7 @@ import Button from 'material-ui/Button'
 import Card, { CardHeader, CardContent } from 'material-ui/Card'
 import Avatar from 'material-ui/Avatar'
 import ListIcon from 'material-ui-icons/List'
+import green from 'material-ui/colors/green'
 import 'isomorphic-fetch'
 
 const styles = theme => ({
@@ -16,9 +17,16 @@ const styles = theme => ({
   card: {
     marginBottom: '15px',
   },
+  cartHeader: {
+    paddingBottom: '0px',
+  },
+  listAvatar: {
+    color: '#fff',
+    backgroundColor: green[300],
+  },
   widthButton: {
     width: '100%',
-    padding: '0',
+    padding: '0 15px',
     'text-transform': 'none',
   },
   textAlignLeft: {
@@ -38,8 +46,9 @@ export default class Component extends React.Component {
     return (
       <Card className={classes.card} key={data.id}>
         <CardHeader
+          className={`${classes.flex} ${classes.cartHeader}`}
           avatar={
-            <Avatar aria-label="Recipe" className={classes.avatar}>
+            <Avatar aria-label="Recipe" className={classes.listAvatar}>
               <ListIcon />
             </Avatar>
                 }

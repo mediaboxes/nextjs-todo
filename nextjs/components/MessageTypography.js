@@ -24,7 +24,7 @@ export default class Component extends React.Component {
       return null
     }
     return (
-      <Typography type="subheading" className={`${classes.flex} ${classes.message}`}>
+      <Typography type="title" className={`${classes.flex} ${classes.message}`}>
         {this.props.message}
       </Typography>
     )

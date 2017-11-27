@@ -15,14 +15,14 @@ function todolists(req, res) {
   FROM ?? 
   LEFT OUTER JOIN ?? ON(?? = ??) 
   GROUP BY ??
-  ORDER BY MAX(??) desc,?? desc;
+  ORDER BY MAX(IF(?? = ?, ??, NULL)) desc,?? desc;
   `
   const table = [
     'todo_lists.id', 'todo_lists.title', 'todo_data.id', 'all_count', 'todo_data.complete', 1, 'complete_count', 'todo_data.complete', 0, 'todo_data.deadline_at', 'min_deadline',
     'todo_lists',
     'todo_data', 'todo_lists.id', 'todo_data.todo_list_id',
     'todo_lists.id',
-    'todo_data.created_at', 'todo_lists.created_at',
+    'todo_data.complete', 0, 'todo_data.created_at', 'todo_lists.created_at',
   ]
 
   sqlPromiss(mysql.format(query, table))
