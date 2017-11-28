@@ -8,7 +8,6 @@ import Card, { CardHeader, CardContent } from 'material-ui/Card'
 import Avatar from 'material-ui/Avatar'
 import ListIcon from 'material-ui-icons/List'
 import green from 'material-ui/colors/green'
-import 'isomorphic-fetch'
 
 const styles = theme => ({
   flex: {

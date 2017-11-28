@@ -7,7 +7,6 @@ import TextField from 'material-ui/TextField'
 import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
-import 'isomorphic-fetch'
 
 import BaseLayout from '../components/BaseLayout'
 import CardTodoListSearch from '../components/CardTodoListSearch'
@@ -99,7 +98,7 @@ class PageComponent extends React.Component {
           </Typography>
           <form className={`${classes.flex} ${classes.form}`} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }}>
             <Grid container spacing={24}>
-              <Grid item xs={12} sm={10} className={classes.alignSelfBaseline}>
+              <Grid item xs={12} sm={9} className={classes.alignSelfBaseline}>
                 <TextField
                   name="searchWord"
                   label="検索テキストを入力してください"
@@ -109,7 +108,7 @@ class PageComponent extends React.Component {
                   margin="normal"
                 />
               </Grid>
-              <Grid item xs={12} sm={2} className={classes.alignSelfBaseline}>
+              <Grid item xs={12} sm={3} className={classes.alignSelfBaseline}>
                 <Button raised color="primary" className={classes.widthButton} onClick={this.search}>
                   検索
                 </Button>
@@ -119,12 +118,14 @@ class PageComponent extends React.Component {
 
           <ErrorTypography errorMessage={this.state.error} />
 
-          {(this.state.loaded) ? <MessageTypography message={(this.state.todoData.length > 0) ? `ToDoが${this.state.todoData.length}件見つかりました` : '対象のToDoは見つかりません'} /> : null}
+          {(this.state.loaded && this.state.todoData.length < 1) ? (<ErrorTypography errorMessage="対象のToDoは見つかりません" />) : null}
+          {(this.state.loaded && this.state.todoData.length > 0) ? (<MessageTypography message={`ToDoが${this.state.todoData.length}件見つかりました`} />) : null}
           {this.state.todoData.map(data => (
             <CardTodoDataSearch key={data.id} data={data} linkToDetail={this.constructor.linkToDetail(data.todo_list_id)} />
           ))}
 
-          {(this.state.loaded) ? <MessageTypography message={(this.state.todoLists.length > 0) ? `ToDoリストが${this.state.todoLists.length}件見つかりました` : '対象のToDoリストは見つかりません'} /> : null}
+          {(this.state.loaded && this.state.todoLists.length < 1) ? (<ErrorTypography errorMessage="対象のToDoリストは見つかりません" />) : null}
+          {(this.state.loaded && this.state.todoLists.length > 0) ? (<MessageTypography message={`ToDoリストが${this.state.todoLists.length}件見つかりました`} />) : null}
           {this.state.todoLists.map(data => (
             <CardTodoListSearch key={data.id} data={data} linkToDetail={this.constructor.linkToDetail(data.id)} />
           ))}

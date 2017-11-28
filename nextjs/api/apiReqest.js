@@ -176,6 +176,58 @@ function search(req, res) {
     })
 }
 
+function deleteTodo(req, res) {
+  const query = 'DELETE FROM ?? WHERE ?? = ?'
+  const table = ['todo_data', 'id', req.body.id]
+  sqlPromiss(mysql.format(query, table))
+    .then((results) => {
+      res.send(Object.assign({ success: true }, { results }))
+    })
+    .catch((error) => {
+      res.status(500)
+      res.send({ success: false, errorMessage: error.message })
+    })
+}
+
+function deleteTodoList(req, res) {
+  Promise.resolve()
+    .then(() => Promise.resolve()
+      .then(() => {
+        const query = 'START TRANSACTION'
+        const table = []
+        return sqlPromiss(mysql.format(query, table))
+      }))
+    .then(() => Promise.resolve()
+      .then(() => {
+        const query = 'DELETE FROM ?? WHERE ?? = ?'
+        const table = ['todo_data', 'todo_list_id', req.body.id]
+        return sqlPromiss(mysql.format(query, table))
+      }))
+    .then(() => Promise.resolve()
+      .then(() => {
+        const query = 'DELETE FROM ?? WHERE ?? = ?'
+        const table = ['todo_lists', 'id', req.body.id]
+        return sqlPromiss(mysql.format(query, table))
+      }))
+    .then(() => Promise.resolve()
+      .then(() => {
+        const query = 'COMMIT'
+        const table = []
+        return sqlPromiss(mysql.format(query, table))
+      }))
+    .then((results) => {
+      res.send(Object.assign({ success: true }, { results }))
+    })
+    .catch((error) => {
+      const query = 'ROLLBACK'
+      const table = []
+      sqlPromiss(mysql.format(query, table))
+        .catch(() => {})
+      res.status(500)
+      res.send({ success: false, errorMessage: error.message })
+    })
+}
+
 
 module.exports = {
   get: {
@@ -190,5 +242,9 @@ module.exports = {
   },
   patch: {
     changeTodo,
+  },
+  delete: {
+    deleteTodo,
+    deleteTodoList,
   },
 }

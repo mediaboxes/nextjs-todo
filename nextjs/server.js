@@ -33,6 +33,8 @@ app.prepare().then(() => {
   server.post('/api/add_todolist', apiReqest.post.addTodolist)
   server.post('/api/add_todo', apiReqest.post.addTodo)
   server.patch('/api/change_todo', apiReqest.patch.changeTodo)
+  server.delete('/api/delete_todo', apiReqest.delete.deleteTodo)
+  server.delete('/api/delete_todolist', apiReqest.delete.deleteTodoList)
 
 
   server.get('*', (req, res) => handle(req, res))

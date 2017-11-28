@@ -1,18 +1,29 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import autobind from 'autobind-decorator'
 import moment from 'moment'
 import { withStyles } from 'material-ui/styles'
 import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
-import Card, { CardHeader, CardContent } from 'material-ui/Card'
+import Card, { CardHeader, CardContent, CardActions } from 'material-ui/Card'
 import Avatar from 'material-ui/Avatar'
 import ListIcon from 'material-ui-icons/List'
+import Delete from 'material-ui-icons/Delete'
+import IconButton from 'material-ui/IconButton'
 import green from 'material-ui/colors/green'
-import 'isomorphic-fetch'
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from 'material-ui/Dialog'
 
 const styles = theme => ({
   flex: {
     flex: 1,
+  },
+  flexGrow: {
+    flex: '1 1 auto',
   },
   listAvatar: {
     color: '#fff',
@@ -40,9 +51,28 @@ export default class Component extends React.Component {
   static propTypes = {
     data: PropTypes.object.isRequired,
     linkToDetail: PropTypes.func.isRequired,
+    deleteTodoList: PropTypes.func.isRequired,
+  }
+  constructor(props, context) {
+    super(props, context)
+    this.state = { open: false }
+  }
+  @autobind
+  handleRequestOpen() {
+    this.setState({ open: true })
+  }
+  @autobind
+  handleRequestClose() {
+    this.setState({ open: false })
+  }
+  @autobind
+  handleRequestDelete() {
+    this.handleRequestClose()
   }
   render() {
-    const { classes, data, linkToDetail } = this.props
+    const {
+      classes, data, linkToDetail, deleteTodoList,
+    } = this.props
     return (
       <Card className={classes.card} key={data.id}>
         <CardHeader
@@ -64,6 +94,29 @@ export default class Component extends React.Component {
             {(data.min_deadline) ? `~${moment(data.min_deadline).format('YYYY年MM月DD日')}` : null }
           </Typography>
         </CardContent>
+        <CardActions disableActionSpacing>
+          <div className={classes.flexGrow} />
+          <IconButton aria-label="delete" onClick={this.handleRequestOpen}>
+            <Delete />
+          </IconButton>
+        </CardActions>
+
+        <Dialog open={this.state.open} onRequestClose={this.handleRequestClose}>
+          <DialogTitle>ToDoリストの削除確認</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {data.text} のToDoリストを削除します。この操作は戻すことが出来ません。
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleRequestClose} color="primary"autoFocus>
+              キャンセル
+            </Button>
+            <Button onClick={deleteTodoList} raised color="accent" >
+              削除
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Card>
     )
   }

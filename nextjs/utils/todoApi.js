@@ -86,3 +86,35 @@ export async function apiSearch(word) {
   isResponseError(json)
   return json.results
 }
+
+export async function apiDeleteTodo(id) {
+  const obj = {
+    id,
+  }
+  const method = 'DELETE'
+  const body = JSON.stringify(obj)
+  const headers = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  }
+  const response = await fetch('http://localhost:3000/api/delete_todo', { method, headers, body })
+  const json = await response.json()
+  isResponseError(json)
+  return json.results
+}
+
+export async function apiDeleteTodoList(id) {
+  const obj = {
+    id,
+  }
+  const method = 'DELETE'
+  const body = JSON.stringify(obj)
+  const headers = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  }
+  const response = await fetch('http://localhost:3000/api/delete_todoList', { method, headers, body })
+  const json = await response.json()
+  isResponseError(json)
+  return json.results
+}
