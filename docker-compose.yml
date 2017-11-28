@@ -17,7 +17,6 @@ services:
       - mysql:mysql
     ports:
       - "3000:3000"
-      - "9229:9229"
     environment:
       TZ: Japan
     volumes:
