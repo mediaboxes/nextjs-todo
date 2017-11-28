@@ -10,8 +10,6 @@ import CheckBoxOutlineBlank from 'material-ui-icons/CheckBoxOutlineBlank'
 import CheckBox from 'material-ui-icons/CheckBox'
 import deepOrange from 'material-ui/colors/deepOrange'
 
-import 'isomorphic-fetch'
-
 const styles = theme => ({
   flex: {
     flex: 1,

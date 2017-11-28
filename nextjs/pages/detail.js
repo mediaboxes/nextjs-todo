@@ -19,7 +19,7 @@ import CardTodoDataMain from '../components/CardTodoDataMain'
 import materialUiWithRoot from '../provider/materialUiWithRoot'
 import mobxWithRoot from '../provider/mobxWithRoot'
 
-import { apiTodolist, apiTodos, apiAddTodo, apiChangeCompleatTodo } from '../utils/todoApi'
+import { apiTodolist, apiTodos, apiAddTodo, apiChangeCompleatTodo, apiDeleteTodo } from '../utils/todoApi'
 
 import MessageTypography from '../components/MessageTypography'
 import ErrorTypography from '../components/ErrorTypography'
@@ -152,6 +152,21 @@ class PageComponent extends React.Component {
     }
   }
 
+  @autobind
+  deleteTodo(data) {
+    return async (event) => {
+      try {
+        await apiDeleteTodo(data.id)
+        const res = await apiTodos(this.state.detailList.id)
+        this.setState({
+          message: 'ToDoが削除されました', todos: res,
+        })
+      } catch (error) {
+        this.setState({ error: error.message })
+      }
+    }
+  }
+
   render() {
     const { classes } = this.props
     if (!this.state.detailList || !this.state.todos) return null
@@ -168,7 +183,7 @@ class PageComponent extends React.Component {
           </div>
           <form className={`${classes.flex} ${classes.form}`} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }}>
             <Grid container spacing={24}>
-              <Grid item xs={12} sm={10} className={classes.alignSelfBaseline}>
+              <Grid item xs={12} sm={9} className={classes.alignSelfBaseline}>
                 <TextField
                   name="todoName"
                   label="新しいToDo名を入力してください"
@@ -191,7 +206,7 @@ class PageComponent extends React.Component {
                 }}
                 />
               </Grid>
-              <Grid item xs={12} sm={2} className={classes.alignSelfBaseline}>
+              <Grid item xs={12} sm={3} className={classes.alignSelfBaseline}>
                 <div className={classes.wrapper}>
                   <Button
                     raised
@@ -212,7 +227,7 @@ class PageComponent extends React.Component {
           <ErrorTypography errorMessage={(!this.state.todos || this.state.todos.length < 1) ? '登録されたToDoはございません' : null} />
 
           {this.state.todos.map((data, index) => (
-            <CardTodoDataMain key={data.id} data={data} changeCompleat={this.changeCompleat(data, index)} />
+            <CardTodoDataMain key={data.id} data={data} changeCompleat={this.changeCompleat(data, index)} deleteTodo={this.deleteTodo(data)} />
           ))}
         </div>
       </BaseLayout>

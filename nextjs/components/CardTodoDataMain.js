@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import autobind from 'autobind-decorator'
 import moment from 'moment'
 import { withStyles } from 'material-ui/styles'
 import Typography from 'material-ui/Typography'
@@ -7,10 +8,17 @@ import Button from 'material-ui/Button'
 import Card, { CardHeader, CardContent, CardActions } from 'material-ui/Card'
 import Avatar from 'material-ui/Avatar'
 import CheckBoxOutlineBlank from 'material-ui-icons/CheckBoxOutlineBlank'
+import IconButton from 'material-ui/IconButton'
 import CheckBox from 'material-ui-icons/CheckBox'
+import Delete from 'material-ui-icons/Delete'
 import deepOrange from 'material-ui/colors/deepOrange'
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from 'material-ui/Dialog'
 
-import 'isomorphic-fetch'
 
 const styles = theme => ({
   flex: {
@@ -39,9 +47,30 @@ export default class Component extends React.Component {
   static propTypes = {
     data: PropTypes.object.isRequired,
     changeCompleat: PropTypes.func.isRequired,
+    deleteTodo: PropTypes.func.isRequired,
   }
+  constructor(props, context) {
+    super(props, context)
+    this.state = { open: false }
+  }
+
+  @autobind
+  handleRequestOpen() {
+    this.setState({ open: true })
+  }
+  @autobind
+  handleRequestClose() {
+    this.setState({ open: false })
+  }
+  @autobind
+  handleRequestDelete() {
+    this.handleRequestClose()
+  }
+
   render() {
-    const { classes, data, changeCompleat } = this.props
+    const {
+      classes, data, changeCompleat, deleteTodo,
+    } = this.props
     return (
       <Card className={classes.todoCard} key={data.id}>
         <div className={classes.todoCardMain}>
@@ -65,6 +94,29 @@ export default class Component extends React.Component {
             {`作成日 : ${moment(data.created_at).format('YYYY年MM月DD日')}`}
           </Typography>
         </CardContent>
+        <CardActions disableActionSpacing>
+          <div className={classes.flexGrow} />
+          <IconButton aria-label="delete" onClick={this.handleRequestOpen}>
+            <Delete />
+          </IconButton>
+        </CardActions>
+
+        <Dialog open={this.state.open} onRequestClose={this.handleRequestClose}>
+          <DialogTitle>ToDoの削除確認</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {data.text} のToDoを削除します。この操作は戻すことが出来ません。
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleRequestClose} color="primary"autoFocus>
+              キャンセル
+            </Button>
+            <Button onClick={deleteTodo} raised color="accent" >
+              削除
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Card>
     )
   }

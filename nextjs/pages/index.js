@@ -8,13 +8,12 @@ import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
 import { CircularProgress } from 'material-ui/Progress'
-import 'isomorphic-fetch'
 
 import BaseLayout from '../components/BaseLayout'
 import CardTodoListMain from '../components/CardTodoListMain'
 import materialUiWithRoot from '../provider/materialUiWithRoot'
 import mobxWithRoot from '../provider/mobxWithRoot'
-import { apiTodolists, apiAddTodoList } from '../utils/todoApi'
+import { apiTodolists, apiAddTodoList, apiDeleteTodoList } from '../utils/todoApi'
 
 import MessageTypography from '../components/MessageTypography'
 import ErrorTypography from '../components/ErrorTypography'
@@ -107,6 +106,20 @@ class PageComponent extends React.Component {
     }
   }
 
+  @autobind
+  deleteTodoList(data) {
+    return async (event) => {
+      try {
+        await apiDeleteTodoList(data.id)
+        const res = await apiTodolists()
+        this.setState({
+          message: 'ToDoリストが削除されました', lists: res,
+        })
+      } catch (error) {
+        this.setState({ error: error.message })
+      }
+    }
+  }
 
   render() {
     const { classes } = this.props
@@ -115,7 +128,7 @@ class PageComponent extends React.Component {
         <div className={classes.root}>
           <form className={`${classes.flex} ${classes.form}`} noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault() }} >
             <Grid container spacing={24}>
-              <Grid item xs={12} sm={10} className={classes.alignSelfBaseline}>
+              <Grid item xs={12} sm={9} className={classes.alignSelfBaseline}>
                 <TextField
                   label="新しいToDoリスト名を入力してください"
                   fullWidth
@@ -124,7 +137,7 @@ class PageComponent extends React.Component {
                   margin="normal"
                 />
               </Grid>
-              <Grid item xs={12} sm={2} className={classes.alignSelfBaseline}>
+              <Grid item xs={12} sm={3} className={classes.alignSelfBaseline}>
                 <div className={classes.wrapper}>
                   <Button
                     raised
@@ -133,7 +146,7 @@ class PageComponent extends React.Component {
                     disabled={this.state.addApiLoading}
                     onClick={this.addTodoList}
                   >
-                    リストの作成
+                    ToDoリストの作成
                   </Button>
                   {this.state.addApiLoading && <CircularProgress size={24} className={classes.buttonProgress} />}
                 </div>
@@ -145,7 +158,7 @@ class PageComponent extends React.Component {
           <ErrorTypography errorMessage={this.state.error} />
 
           {this.state.lists.map(data => (
-            <CardTodoListMain data={data} key={data.id} linkToDetail={this.constructor.linkToDetail(data.id)} />
+            <CardTodoListMain data={data} key={data.id} linkToDetail={this.constructor.linkToDetail(data.id)} deleteTodoList={this.deleteTodoList(data)} />
           ))}
         </div>
       </BaseLayout>
