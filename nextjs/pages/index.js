@@ -4,7 +4,6 @@ import autobind from 'autobind-decorator'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
-import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
 import { CircularProgress } from 'material-ui/Progress'
@@ -79,7 +78,7 @@ class PageComponent extends React.Component {
     super(props, context)
     this.state = {
       title: '',
-      lists: props.initLists,
+      lists: (props.initLists) ? props.initLists : [],
       message: '',
       error: props.initError,
       addApiLoading: false,

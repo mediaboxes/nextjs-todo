@@ -12,8 +12,6 @@ import Avatar from 'material-ui/Avatar'
 import ListIcon from 'material-ui-icons/List'
 import green from 'material-ui/colors/green'
 
-import 'isomorphic-fetch'
-
 import BaseLayout from '../components/BaseLayout'
 import CardTodoDataMain from '../components/CardTodoDataMain'
 import materialUiWithRoot from '../provider/materialUiWithRoot'
@@ -95,7 +93,7 @@ class PageComponent extends React.Component {
     super(props, context)
     this.state = {
       detailList: (props.initTodoDetailList && props.initTodoDetailList.length > 0) ? props.initTodoDetailList[0] : null,
-      todos: props.initTodos,
+      todos: (props.initTodos) ? props.initTodos : [],
       todoName: '',
       todoLimit: moment().format('YYYY-MM-DD'),
       message: '',

@@ -1,11 +1,7 @@
-const mysql = require('mysql')
-
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 
 const bodyParser = require('body-parser')
-const { createServer } = require('http')
-const { parse } = require('url')
 const express = require('express')
 const next = require('next')
 const mobxReact = require('mobx-react')
