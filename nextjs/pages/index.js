@@ -132,6 +132,7 @@ class PageComponent extends React.Component {
                   label="新しいToDoリスト名を入力してください"
                   fullWidth
                   className={classes.flex}
+                  value={this.state.title}
                   onChange={this.handleChange('title')}
                   margin="normal"
                 />

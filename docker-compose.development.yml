@@ -7,9 +7,11 @@ services:
     environment:
       TZ: Japan
       MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: tmp_todo
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./mysql/data:/var/lib/mysql
+      - ./mysql/init:/etc/initMysql
   nextjs:
     build: ./nextjs
     command: bash -c "yarn && yarn dev"

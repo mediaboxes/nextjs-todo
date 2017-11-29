@@ -24,12 +24,28 @@ Next.jsで使用している、Node.jsにAPIを追加しています<br>
 ```
 /nextjs/api
 ```
-### API
-Next.jsで使用している、Node.jsにAPIを追加しています<br>
-下記の階層にapi用の処理を作成しています。
-```
-/nextjs/api
-```
+
+### MySQL
+#### データベース
++ todo_database
+#### テーブル
++ todo_lists : ToDoリスト用
++ todo_data : ToDo情報用
+#### SQLダンプデータ
++ mysql/init/
+  + create.sql : データベース/テーブル作成
+  + seed.sql   : テーブルインポート
+
+### Next.js
+#### 主要ファイル構成
++ nextjs/pages/     :各ページの構成
+  + _document.js      :共通レイアウト
+  + index.js          :トップページ
+  + detail.js         :ToDoリスト詳細ページ
+  + search.js         :検索ページ
++ nextjs/components/ :uiコンポーネント
++ nextjs/utils/      :ユティリティー
+  + todoApi.js        :APIユティリティー
 
 ## 開発環境のセットアップ手順
 ### 動作環境
@@ -43,29 +59,32 @@ macOS High Sierra
 #### リリース 起動コマンド
 
 next.jsのリリースモードで起動<br>
-Htmlの書き出しとサーバー機能が起動されます
++ Htmlの書き出しとサーバー機能が起動されます
 ```
 docker-compose up -d
 ```
 
 
-#### 開発時 起動コマンド
+#### (開発時 起動コマンド)
 
 next.jsの開発モードで起動<br>
-ソースコードを変更時にHtmlのリロードなどの開発機能が実行されます
++ ソースコードを変更時にHtmlのリロードなどの開発機能が実行<br>
++ MySQLへのポートを解放
 ```
 docker-compose up -d -f docker-compose.development
 ```
 
-起動コマンドを実行後にlocalhost port:3000へブラウザで確認してください<br>
-[http://localhost:3000/](http://localhost:3000/)
-
-
 #### MySQL初期化
-データーベースを初期化します
+初回起動時やリセットしたい時にデーターベースを初期化します
 ```
+docker-compose exec mysql bash -c "mysql -u root -ppassword --default-character-set=binary tmp_todo < /etc/initMysql/create.sql"
 ```
+
 #### MySQL　Seed
 データーベースにエクスポートしているテストデータをインポートします
 ```
+docker-compose exec mysql bash -c "mysql -u root -ppassword --default-character-set=binary todo_database < /etc/initMysql/seed.sql"
 ```
+
+起動コマンドを実行(初回はMySQL初期化も実行)後にブラウザで、localhost:3000へ接続して確認してください<br>
+[http://localhost:3000/](http://localhost:3000/)
