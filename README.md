@@ -29,8 +29,8 @@ Next.jsで使用している、Node.jsにAPIを追加しています<br>
 #### データベース
 + todo_database
 #### テーブル
-+ todo_lists : ToDoリスト用
-+ todo_data : ToDo情報用
++ todo_lists : ToDoリスト用
++ todo_data : ToDo情報用
 #### SQLダンプデータ
 + mysql/init/
   + create.sql : データベース/テーブル作成
@@ -81,7 +81,7 @@ docker-compose exec mysql bash -c "mysql -u root -ppassword --default-character-
 ```
 
 #### MySQL　Seed
-データーベースにエクスポートしているテストデータをインポートします
+データーベースにテストデータをインポートします
 ```
 docker-compose exec mysql bash -c "mysql -u root -ppassword --default-character-set=binary todo_database < /etc/initMysql/seed.sql"
 ```
